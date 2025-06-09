@@ -137,4 +137,4 @@ def handle_reduce_life(data):
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app)
