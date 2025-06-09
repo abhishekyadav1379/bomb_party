@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bomb Party UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='body_bomb.css') }}"
+    />
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  </head>
+
+  <body data-name="{{ name }}" data-room="{{ room }}">
+    <div class="game-container">
+      <div class="title">💣 Bomb Party 💣</div>
+
+      <div class="players">
+        <div class="player">
+          <div>Abhishek</div>
+          <div class="lives">❤️❤️❤️</div>
+        </div>
+      
+      </div>
+
+      <div class="prompt">wait</div>
+      <div class="timer" id="timer">🧨🧨</div>
+
+      <div class="input-area">
+        <input type="text" placeholder="Type word..." id="wordInput" disabled />
+        <button class="confetti-button" id="submitBtn" style="display: none;" >Submit</button>
+        <button class="confetti-button" id="startBtn" onclick="game_start()">Start</button>
+        <button class="confetti-button" id="restartbtn" style="display: none;" >Restart</button>
+
+      </div>
+    </div>
+
+    
+
+    <script src="{{ url_for('static', filename='body_bomb.js') }}"></script>
+
+    <script>
+      
+    </script>
+  </body>
+</html>

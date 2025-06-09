@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <title>BombParty</title>
+    <style>
+      body {
+        background: linear-gradient(to bottom, #1a1a2e, #16213e);
+        margin: 0;
+        padding: 0;
+        font-family: "Arial", sans-serif;
+
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+      }
+
+      .container {
+        text-align: center;
+        width: 300px;
+      }
+
+      .logo {
+        font-size: 40px;
+        font-weight: bold;
+        margin-bottom: 30px;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .input-group label {
+        font-size: 18px;
+        color: #bdb6d2;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        margin-top: 5px;
+        background-color: #2b1a47;
+        color: white;
+      }
+
+      .button {
+        background-color: #f3a33f;
+        color: white;
+        font-size: 20px;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 10px;
+        box-shadow: 0 4px #d1852a;
+      }
+
+      .bomb-icon {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 10px;
+        position: relative;
+        animation: shake-left-right 0.5s infinite;
+      }
+
+      @keyframes shake-left-right {
+        0% {
+          left: 0;
+        }
+        50% {
+          left: -2px;
+        }
+        100% {
+          left: 2px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/7457/7457834.png"
+        alt="bomb"
+        class="bomb-icon"
+      />
+      <div class="logo">Bomb Party</div>
+
+      <form action="/waiting_players" method="POST">
+        <div class="input-group">
+          <label for="name">Player</label>
+          <input type="text" id="name" name="name" placeholder="Name" />
+        </div>
+
+        <div class="input-group">
+          <label for="room">Room code</label>
+          <input type="text" id="room" name="room" placeholder="ABCD" />
+        </div>
+
+        <button class="button" type="submit">CREATE/JOIN</button>
+      </form>
+    </div>
+
+    <script>
+     // Function to get query parameters from URL
+  function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      name: params.get("name") || "",
+      room: params.get("room") || "",
+    };
+  }
+
+  // Set the values in input fields
+  window.onload = function () {
+    const { name, room } = getQueryParams();
+    document.getElementById("name").value = name;
+    document.getElementById("room").value = room;
+  };
+    </script>
+  </body>
+</html>

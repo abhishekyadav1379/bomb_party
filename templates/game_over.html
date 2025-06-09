@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bomb Party - Game Over</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #1a1a2e, #16213e);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .game-over-container {
+      text-align: center;
+      background: #2b2b44;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    .game-over-container h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      color: #ff4d4d;
+    }
+
+    .winner-name {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #00ffcc;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .button {
+      background-color: #4444aa;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #6666ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-over-container">
+      <h1>🧨💣🧨</h1>
+    <h1>Bomb Party</h1>
+    <h2>Game Over!</h2>
+    <div class="winner-name">Winner: <strong>Player 1</strong></div>
+    <div class="button-group">
+      <button class="button" onclick="replayGame()">Replay</button>
+      <button class="button" onclick="goHome()">Home</button>
+    </div>
+  </div>
+
+  <script>
+    function replayGame() {
+      alert("Replay button clicked!"); 
+      // Replace with actual logic like: window.location.href = "game.html";
+    }
+
+    function goHome() {
+      alert("Home button clicked!"); 
+      // Replace with actual logic like: window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
