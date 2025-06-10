@@ -2,7 +2,13 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from collections import defaultdict
 from spell_checker import get_random_2_letter, check_part_in_word
+from flask_ngrok import run_with_ngrok
+
+
 app = Flask(__name__)
+
+run_with_ngrok(app)  # Start ngrok when running the app
+
 socketio = SocketIO(app)
 players = defaultdict(dict)          # room -> { sid: name }
 players_name = {}                    # room -> list of player names
@@ -137,4 +143,5 @@ def handle_reduce_life(data):
 
 
 if __name__ == "__main__":
-    socketio.run(app)
+    # socketio.run(app, debug=True)
+    app.run()

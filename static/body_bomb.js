@@ -127,6 +127,11 @@ document.getElementById("submitBtn").addEventListener("click", () => {
   submit_Code();
 });
 
+document.getElementById("submitBtn").addEventListener("touchstart", () => {
+  submit_Code();
+});
+
+
 document.getElementById("wordInput").addEventListener("keydown", function(event) {
   if (event.key === "Enter") {
     event.preventDefault(); // prevent default form submission if any
@@ -139,7 +144,7 @@ document.getElementById("wordInput").addEventListener("keydown", function(event)
 
 function submit_Code(){
   document.getElementById("submitBtn").disabled = true;
-  const word = document.getElementById("wordInput").value;
+  const word = document.getElementById("wordInput").value.toLowerCase();
   const part = document.querySelector('.prompt').textContent;
 
   socket.emit("spell_check", {
@@ -166,8 +171,13 @@ socket.on("spell_check_result", (data) => {
         lives: submit_click
       });
     }
+  } else {
+    // This part handles when the spelling is incorrect
+    document.getElementById("submitBtn").disabled = false;
+    document.getElementById("wordInput").disabled = false;
   }
 });
+
 
 socket.on("life_update", (data) => {
   submit_click = 1;
