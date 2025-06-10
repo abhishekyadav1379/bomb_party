@@ -7,7 +7,7 @@ from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
 
-run_with_ngrok(app)  # Start ngrok when running the app
+# run_with_ngrok(app)  # Start ngrok when running the app
 
 socketio = SocketIO(app)
 players = defaultdict(dict)          # room -> { sid: name }
@@ -35,6 +35,7 @@ def waiting_players():
         index_map[room] = 0
     return render_template("body_bomb.html", name=name, room=room)
 
+
 @socketio.on("game_start")
 def handle_game_start(data):
     room = data["room"]
@@ -47,11 +48,12 @@ def handle_join(data):
     name = data["player_name"]
     room = data["room"]
     sid = request.sid
-    
+
     if game_started.get(room, False):  # Game already started
-        emit("game_already_started", {}, room=sid)  # Send message to only this client
+        # Send message to only this client
+        emit("game_already_started", {}, room=sid)
         return
-    
+
     join_room(room)
     players[room][sid] = name
     player_lives[room][name] = 3  # Initialize lives
@@ -68,13 +70,13 @@ def handle_disconnect():
                 players_name[room].remove(name)
             leave_room(room)
             emit("player_update", list(players[room].values()), room=room)
+            if len(players_name[room]) == 1:
+                winner = players_name[room][0]
+                socketio.emit("game_over", {
+                    "winner": winner
+                }, room=room)
+                game_started[room] = False  # Reset game started flag
             break
-
-
-# @socketio.on("game_start")
-# def handle_game_start(data):
-#     room = data["room"]
-#     start_game_loop(room)
 
 
 def start_game_loop(room):
@@ -99,10 +101,19 @@ def spell_check(data):
     room = data["room"]
     word = data["word"]
     part = data["part"]
+
+    player_name = players[room][request.sid]
+
     if check_part_in_word(part, word):
         socketio.emit("spell_check_result", {"result": "correct"}, room=room)
     else:
         socketio.emit("spell_check_result", {"result": "incorrect"}, room=room)
+
+    # Broadcast the submitted word to all other players
+    socketio.emit("broadcast_word_input", {
+        "player": player_name,
+        "word": word
+    }, room=room)
 
 
 @socketio.on("next_turn_request")

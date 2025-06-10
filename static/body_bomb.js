@@ -215,7 +215,19 @@ document.getElementById("restartbtn").addEventListener("click", function () {
 });
 
 
+socket.on("broadcast_word_input", (data) => {
+  // Only update if it's not the current player
+  if (data.player !== player_name) {
+    const inputField = document.getElementById("wordInput");
+    inputField.value = data.word;
+    inputField.disabled = true;
+    inputField.style.color = "black"; 
+  }
+});
+
+
 socket.on("game_already_started", () => {
   alert("Game is already started. You can't join now.");
   window.location.href = "/"; // or redirect somewhere else
 });
+
