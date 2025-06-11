@@ -7,7 +7,7 @@ from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
 
-run_with_ngrok(app)  # Start ngrok when running the app
+# run_with_ngrok(app)  # Start ngrok when running the app
 
 socketio = SocketIO(app)
 players = defaultdict(dict)          # room -> { sid: name }
@@ -17,6 +17,7 @@ game_loops = {}                      # room -> function to trigger next turn
 player_lives = defaultdict(lambda: defaultdict(
     lambda: 3))  # room -> { name: lives }
 game_started = {}  # room -> bool
+current_player = {}  # room -> current player's name
 
 
 @app.route("/")
@@ -68,17 +69,34 @@ def handle_disconnect():
     for room in list(players.keys()):
         if sid in players[room]:
             name = players[room].pop(sid)
+
             if name in players_name[room]:
                 players_name[room].remove(name)
+
             leave_room(room)
-            emit("player_update", list(players[room].values()), room=room)
-            print(players_name[room])
+            # emit("player_update", list(players[room].values()), room=room)
+            player_list = [
+                {"name": name, "lives": player_lives[room][name]} for name in players[room].values()
+            ]
+            emit("player_update_with_lives", player_list, room=room)
+
+            # Check if current player disconnected
+            if current_player.get(room) == name:
+                # Reduce life to 0 and eliminate
+                player_lives[room][name] = 0
+                socketio.emit("player_eliminated", {"player": name}, room=room)
+
+                # Check if only one player is left
             if len(players_name[room]) == 1:
                 winner = players_name[room][0]
-                socketio.emit("game_over", {
-                    "winner": winner
-                }, room=room)
-                game_started[room] = False  # Reset game started flag
+                socketio.emit("game_over", {"winner": winner}, room=room)
+                game_started[room] = False
+            else:
+                # Switch to next player
+                if room in game_loops:
+                    game_loops[room]()
+
+            # Cleanup if room is empty
             if len(players_name[room]) == 0:
                 players.pop(room, None)
                 players_name.pop(room, None)
@@ -86,6 +104,8 @@ def handle_disconnect():
                 game_loops.pop(room, None)
                 player_lives.pop(room, None)
                 game_started.pop(room, None)
+                current_player.pop(room, None)
+
             break
 
 
@@ -97,6 +117,8 @@ def start_game_loop(room):
         index %= len(players_name[room])
         pl_name = players_name[room][index]
         index_map[room] = index + 1
+        current_player[room] = pl_name  # 🔴 Store current player here
+
         socketio.emit("next_turn", {
             "player": pl_name,
             "duration": 20,

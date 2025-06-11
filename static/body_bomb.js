@@ -43,6 +43,7 @@ let original_player = null;
 let spelling = null;
 let submit_click = 1;
 
+
 socket.emit("join", {
   player_name: player_name,
   room: room
@@ -51,7 +52,7 @@ socket.emit("join", {
 document.getElementById("submitBtn").style.display = "none";
 document.getElementById("wordInput").disabled = true;
 
-worker.onmessage = function(e) {
+worker.onmessage = function (e) {
   const countdown = e.data;
   const timer = document.getElementById("timer");
   if (timer) {
@@ -73,8 +74,9 @@ socket.on("player_update", (players) => {
   const playersDiv = document.querySelector(".players");
   playersDiv.innerHTML = "";
   players.forEach((p) => {
+    const highlightClass = (p === currentPlayer) ? "highlight" : "";
     playersDiv.innerHTML += `
-      <div class="player">
+      <div class="player ${highlightClass}">
         <div>${p}</div>
         <div class="lives">❤️❤️❤️</div>
       </div>
@@ -82,8 +84,30 @@ socket.on("player_update", (players) => {
   });
 });
 
+socket.on("player_update_with_lives", (players) => {
+  const playersDiv = document.querySelector(".players");
+  playersDiv.innerHTML = "";
+  players.forEach(({
+    name,
+    lives
+  }) => {
+    const highlightClass = (name === currentPlayer) ? "highlight" : "";
+    const heartIcons = "❤️".repeat(lives);
+    playersDiv.innerHTML += `
+      <div class="player ${highlightClass}">
+        <div>${name}</div>
+        <div class="lives">${heartIcons}</div>
+      </div>
+    `;
+  });
+});
+
+
+
 socket.on("next_turn", (data) => {
-  worker.postMessage({ command: 'stop' }); // stop existing timer
+  worker.postMessage({
+    command: 'stop'
+  }); // stop existing timer
   currentPlayer = data.player;
   const countdownDuration = data.duration || 10;
   spelling = null;
@@ -113,7 +137,10 @@ socket.on("next_turn", (data) => {
     document.getElementById("startBtn").style.display = "none";
   }
 
-  worker.postMessage({ command: 'start', duration: countdownDuration });
+  worker.postMessage({
+    command: 'start',
+    duration: countdownDuration
+  });
 });
 
 document.getElementById("startBtn").addEventListener("click", () => {
@@ -132,7 +159,7 @@ document.getElementById("submitBtn").addEventListener("touchstart", () => {
 });
 
 
-document.getElementById("wordInput").addEventListener("keydown", function(event) {
+document.getElementById("wordInput").addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     event.preventDefault(); // prevent default form submission if any
     if (!document.getElementById("submitBtn").disabled) {
@@ -142,7 +169,7 @@ document.getElementById("wordInput").addEventListener("keydown", function(event)
 });
 
 
-function submit_Code(){
+function submit_Code() {
   document.getElementById("submitBtn").disabled = true;
   const word = document.getElementById("wordInput").value.toLowerCase();
   const part = document.querySelector('.prompt').textContent;
@@ -158,7 +185,9 @@ socket.on("spell_check_result", (data) => {
   spelling = data.result;
 
   if (spelling === 'correct') {
-    worker.postMessage({ command: 'stop' });
+    worker.postMessage({
+      command: 'stop'
+    });
     document.getElementById("timer").textContent = `⏳ 0s ⏳`;
     document.getElementById("wordInput").disabled = true;
     document.getElementById("submitBtn").style.display = "none";
@@ -201,7 +230,9 @@ socket.on("player_eliminated", (data) => {
 });
 
 socket.on("game_over", (data) => {
-  worker.postMessage({ command: 'stop' });
+  worker.postMessage({
+    command: 'stop'
+  });
   const winner = data.winner;
   document.querySelector('.prompt').textContent = `Winner: ${winner}`;
   document.getElementById("submitBtn").style.display = "none";
@@ -221,7 +252,7 @@ socket.on("broadcast_word_input", (data) => {
     const inputField = document.getElementById("wordInput");
     inputField.value = data.word;
     inputField.disabled = true;
-    inputField.style.color = "black"; 
+    inputField.style.color = "black";
   }
 });
 
@@ -230,4 +261,3 @@ socket.on("game_already_started", () => {
   alert("Game is already started. You can't join now.");
   window.location.href = "/"; // or redirect somewhere else
 });
-
