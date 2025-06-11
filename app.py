@@ -7,7 +7,7 @@ from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
 
-# run_with_ngrok(app)  # Start ngrok when running the app
+run_with_ngrok(app)  # Start ngrok when running the app
 
 socketio = SocketIO(app)
 players = defaultdict(dict)          # room -> { sid: name }
@@ -28,6 +28,8 @@ def home():
 def waiting_players():
     name = request.form.get("name")
     room = request.form.get("room").upper()
+    if game_started.get(room, False):
+        return render_template("body_bomb.html", name=name, room=room)
     if room in players_name:
         players_name[room].append(name)
     else:
@@ -70,12 +72,20 @@ def handle_disconnect():
                 players_name[room].remove(name)
             leave_room(room)
             emit("player_update", list(players[room].values()), room=room)
+            print(players_name[room])
             if len(players_name[room]) == 1:
                 winner = players_name[room][0]
                 socketio.emit("game_over", {
                     "winner": winner
                 }, room=room)
                 game_started[room] = False  # Reset game started flag
+            if len(players_name[room]) == 0:
+                players.pop(room, None)
+                players_name.pop(room, None)
+                index_map.pop(room, None)
+                game_loops.pop(room, None)
+                player_lives.pop(room, None)
+                game_started.pop(room, None)
             break
 
 
@@ -154,5 +164,5 @@ def handle_reduce_life(data):
 
 
 if __name__ == "__main__":
-    # socketio.run(app, debug=True)
+    # socketio.run(app)
     app.run()
