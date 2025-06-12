@@ -237,6 +237,8 @@ socket.on("game_over", (data) => {
   document.querySelector('.prompt').textContent = `Winner: ${winner}`;
   document.getElementById("submitBtn").style.display = "none";
   document.getElementById("restartbtn").style.display = "inline-block";
+  showWinMessage();
+
 });
 
 document.getElementById("restartbtn").addEventListener("click", function () {
@@ -261,3 +263,23 @@ socket.on("game_already_started", () => {
   alert("Game is already started. You can't join now.");
   window.location.href = "/"; // or redirect somewhere else
 });
+
+function showWinMessage() {
+  document.getElementById('congratsMessage').style.display = 'block';
+  
+  // Confetti animation
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+
+  // You can trigger multiple bursts if you like:
+  setTimeout(() => {
+    confetti({
+      particleCount: 100,
+      spread: 60,
+      origin: { y: 0.6 }
+    });
+  }, 1000);
+}
