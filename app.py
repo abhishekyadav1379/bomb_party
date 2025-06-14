@@ -7,7 +7,7 @@ from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
 
-run_with_ngrok(app)  # Start ngrok when running the app
+# run_with_ngrok(app)  # Start ngrok when running the app
 
 socketio = SocketIO(app)
 players = defaultdict(dict)          # room -> { sid: name }

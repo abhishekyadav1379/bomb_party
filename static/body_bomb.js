@@ -130,6 +130,7 @@ socket.on("next_turn", (data) => {
       document.getElementById("submitBtn").style.display = "inline-block";
       document.getElementById("submitBtn").disabled = false;
       document.getElementById("wordInput").disabled = false;
+      document.getElementById("wordInput").focus();
     } else {
       document.getElementById("submitBtn").style.display = "none";
       document.getElementById("wordInput").disabled = true;

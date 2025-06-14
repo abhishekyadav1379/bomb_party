@@ -9,6 +9,7 @@ body {
   height: 100vh;
   padding: 10px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .game-container {
@@ -89,12 +90,22 @@ button {
   cursor: pointer;
   width: 100%;
   max-width: 200px;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
 }
 
 .timer {
   font-size: 24px;
   margin-bottom: 10px;
   color: #ffcc00;
+}
+
+.eliminated {
+  opacity: 0.5;
+  text-decoration: line-through;
 }
 
 @media (max-width: 480px) {
@@ -115,136 +126,3 @@ button {
     font-size: 14px;
   }
 }
-.button-wrapper canvas{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-pointer-events:none;
-}
-
-
-/*               confetti        */
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-}
-
-.container {
-  text-align: center;
-  position: relative;
-}
-
-button {
-  padding: 15px 30px;
-  font-size: 18px;
-  background: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
-.rocket {
-  position: absolute;
-  left: 50%;
-  bottom: 100px;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 120px;
-  display: none;
-}
-
-.rocket-body {
-  width: 60px;
-  height: 80px;
-  background: #f44336;
-  border-radius: 50% 50% 0 0;
-}
-
-.rocket-bottom {
-  width: 60px;
-  height: 40px;
-  background: #9e9e9e;
-  clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-}
-
-.flame {
-  width: 40px;
-  height: 60px;
-  background: #ff9800;
-  position: absolute;
-  bottom: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  display: none;
-}
-
-.explosion {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, #ff9800, #f44336, transparent);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  display: none;
-}
-
-@keyframes launch {
-  0% {
-      transform: translateY(0) translateX(-50%);
-  }
-  100% {
-      transform: translateY(-1000px) translateX(-50%);
-  }
-}
-
-@keyframes explode {
-  0% {
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 1;
-  }
-  100% {
-      transform: translate(-50%, -50%) scale(2);
-      opacity: 0;
-  }
-}
-
-.launching {
-  display: block;
-  animation: launch 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.exploding {
-  display: block;
-  animation: explode 0.5s ease-out forwards;
-}
-
-.flame.active {
-  display: block;
-  animation: flicker 0.1s infinite;
-}
-
-@keyframes flicker {
-  0% { opacity: 0.8; }
-  50% { opacity: 1; }
-  100% { opacity: 0.8; }
-}
-
-.eliminated {
-    opacity: 0.5;
-    text-decoration: line-through;
-  }
